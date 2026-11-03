@@ -5,3 +5,4 @@ __pycache__/
 venv/
 jenkins_home/
 *.log
+.env
