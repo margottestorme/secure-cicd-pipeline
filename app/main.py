@@ -27,5 +27,7 @@ def upstream_status(url: str):
     parsed = urlparse(url)
     if parsed.scheme != "https" or parsed.hostname not in ALLOWED_UPSTREAM_HOSTS:
         raise HTTPException(status_code=400, detail="URL must be https and target an allow-listed host")
-    response = requests.get(url, timeout=5)
+    # url is validated against ALLOWED_UPSTREAM_HOSTS above; semgrep's generic taint
+    # rule does not model this sanitizer and still flags the call below.
+    response = requests.get(url, timeout=5)  # nosemgrep: python.flask.security.injection.ssrf-requests.ssrf-requests
     return {"status_code": response.status_code}
