@@ -11,6 +11,15 @@ pipeline {
     }
 
     stages {
+        stage('Clean previous reports') {
+            steps {
+                // Report files from a previous run must not leak into this run's
+                // secrets/SAST scans (gitleaks previously flagged a GPG key fingerprint
+                // found inside a leftover trivy-report.json from the prior build).
+                sh 'rm -f *-report.json'
+            }
+        }
+
         stage('Install deps & unit tests') {
             steps {
                 sh '''
